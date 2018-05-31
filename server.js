@@ -24,6 +24,9 @@ mongoose
 //Passport Middleware
 app.use(passport.initialize());
 
+//Passport Config
+require("./config/passport")(passport);
+
 //Use routes
 app.get("/", (req, res) => {
   res.json({ msg: "Message Wall!" });
