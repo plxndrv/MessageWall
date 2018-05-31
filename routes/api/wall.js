@@ -120,13 +120,6 @@ router.delete(
   "/comment/:id/:comment_id",
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
-    const { errors, isValid } = validateMessageInput(req.body);
-    //Check validation
-    if (!isValid) {
-      //Send 400 if any errors
-      return res.status(400).json(errors);
-    }
-
     Message.findById(req.params.id)
       .then(msg => {
         //Check if comments exists

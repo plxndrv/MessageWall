@@ -45,6 +45,24 @@ export const getPosts = () => dispatch => {
       })
     );
 };
+//get post
+export const getPost = id => dispatch => {
+  dispatch(setPostLoading());
+  axios
+    .get("/api/wall/" + id)
+    .then(res =>
+      dispatch({
+        type: GET_POST,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_POST,
+        payload: null
+      })
+    );
+};
 
 //Delete Post
 export const deletePost = id => dispatch => {
@@ -67,7 +85,24 @@ export const deletePost = id => dispatch => {
 //Add Comment
 export const addComment = (postId, commentData) => dispatch => {
   axios
-    .post("/api/wall/comment" + postId, commentData)
+    .post("/api/wall/comment/" + postId, commentData)
+    .then(res =>
+      dispatch({
+        type: GET_POST,
+        payload: res.data
+      })
+    )
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+// Delete Comment
+export const deleteComment = (postId, commentId) => dispatch => {
+  axios
+    .delete(`/api/wall/comment/${postId}/${commentId}`)
     .then(res =>
       dispatch({
         type: GET_POST,

@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { connect } from "react-redux";
-import classnames from "classnames";
 import { Link } from "react-router-dom";
 import { deletePost } from "../../actions/postActions";
 class PostItem extends Component {
@@ -9,7 +8,7 @@ class PostItem extends Component {
     this.props.deletePost(id);
   }
   render() {
-    const { post, auth } = this.props;
+    const { post, auth, showActions } = this.props;
     return (
       <div className="card card-body mb-3">
         <div className="row">
@@ -27,9 +26,13 @@ class PostItem extends Component {
           <div className="col-md-10">
             <p className="lead">{post.text}</p>
 
-            <Link to={"/post/$post._id"} className="btn btn-info mr-1">
-              Comments
-            </Link>
+            {showActions ? (
+              <span>
+                <Link to={"/wall/" + post._id} className="btn btn-info mr-1">
+                  Comments
+                </Link>
+              </span>
+            ) : null}
             {post.user === auth.user.id ? (
               <button
                 onClick={this.onDeleteClick.bind(this, post._id)}
@@ -45,6 +48,10 @@ class PostItem extends Component {
     );
   }
 }
+PostItem.defaultProps = {
+  showActions: true
+};
+
 PostItem.propTypes = {
   deletePost: PropTypes.func.isRequired,
   post: PropTypes.object.isRequired,

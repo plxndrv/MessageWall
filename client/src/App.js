@@ -15,6 +15,7 @@ import Register from "./components/auth/Register";
 import Login from "./components/auth/Login";
 import Posts from "./components/posts/Posts";
 import "./App.css";
+import Post from "./components/post/Post";
 
 //Check for token
 if (localStorage.jwtToken) {
@@ -47,6 +48,9 @@ class App extends Component {
               <Route exact path="/login" component={Login} />
               <Switch>
                 <PrivateRoute exact path="/wall" component={Posts} />
+              </Switch>
+              <Switch>
+                <PrivateRoute exact path="/wall/:id" component={Post} />
               </Switch>
             </div>
             <Footer />
