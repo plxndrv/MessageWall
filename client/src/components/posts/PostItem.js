@@ -12,27 +12,28 @@ class PostItem extends Component {
     return (
       <div className="card card-body mb-3">
         <div className="row">
-          <div className="col-md-2">
-            <a href="profile.html">
-              <img
-                className="rounded-circle d-none d-md-block"
-                src={post.avatar}
-                alt=""
-              />
-            </a>
+          <div className="col-md-1">
+            <img
+              className="rounded-circle d-none d-md-block"
+              src={post.avatar}
+              alt=""
+            />
             <br />
             <p className="text-center">{post.name}</p>
           </div>
+
           <div className="col-md-10">
             <p className="lead">{post.text}</p>
 
             {showActions ? (
               <span>
-                <Link to={"/wall/" + post._id} className="btn btn-info mr-1">
+                <Link to={"/wall/" + post._id} className="btn btn-primary mr-1">
                   Comments
                 </Link>
               </span>
             ) : null}
+          </div>
+          <div className="col-md-1">
             {post.user === auth.user.id ? (
               <button
                 onClick={this.onDeleteClick.bind(this, post._id)}
