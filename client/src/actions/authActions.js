@@ -3,6 +3,19 @@ import setAuthToken from "../utils/setAuthToken";
 import jwt_decode from "jwt-decode";
 import { GET_ERRORS, SET_CURRENT_USER } from "./types";
 
+// Register User
+export const registerUser = (userData, history) => dispatch => {
+  axios
+    .post("/api/users/register", userData)
+    .then(res => history.push("/login"))
+    .catch(err =>
+      dispatch({
+        type: GET_ERRORS,
+        payload: err.response.data
+      })
+    );
+};
+
 //Login - Get USer token
 export const loginUser = userData => dispatch => {
   axios
@@ -26,6 +39,40 @@ export const loginUser = userData => dispatch => {
       })
     );
 };
+
+export const loginGUser = () => dispatch => {
+  axios.get("/api/users/google/login").catch(err =>
+    // dispatch({
+    //   type: GET_ERRORS,
+    //   payload: err.response.data
+    // })
+    console.log(err)
+  );
+};
+
+// export const loginUser = () => dispatch => {
+//   axios
+//     .get("/api/users/google/callback")
+//     .then(res => {
+//       //save to local storage
+//       const { token } = res.data;
+//       //set token to localStorage
+//       localStorage.setItem("jwtToken", token);
+//       //set token to auth header
+//       setAuthToken(token);
+//       //Decode token to get user data
+//       const decoded = jwt_decode(token);
+//       //Set current user
+//       dispatch(setCurrentUser(decoded));
+//     })
+//     .catch(err =>
+//       // dispatch({
+//       //   type: GET_ERRORS,
+//       //   payload: err.response.data
+//       // })
+//       console.log(err)
+//     );
+// };
 
 //Set logged in user
 export const setCurrentUser = decoded => {

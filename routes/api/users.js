@@ -6,11 +6,15 @@ const jwt = require("jsonwebtoken");
 const keys = require("../../config/keys");
 const passport = require("passport");
 
+//Require FacebookStrategy
+require("../../config/facebook");
+
 //Load User Model
 const User = require("../../models/User");
 
 //Validation
 const validateLoginInput = require("../../validation/login");
+const validateRegisterInput = require("../../validation/register");
 
 //@route GET api/users/test
 //@desc Test users route
@@ -21,12 +25,12 @@ router.get("/test", (req, res) => res.json({ msg: "users works" }));
 //@desc   Register User
 //@access Public
 router.post("/register", (req, res) => {
-  // const { errors, isValid } = validateRegisterInput(req.body);
+  const { errors, isValid } = validateRegisterInput(req.body);
 
-  // //Check validation
-  // if (!isValid) {
-  //   return res.status(400).json(errors);
-  // }
+  //Check validation
+  if (!isValid) {
+    return res.status(400).json(errors);
+  }
 
   User.findOne({ email: req.body.email }).then(user => {
     if (user) {
@@ -105,6 +109,28 @@ router.post("/login", (req, res) => {
   });
 });
 
+//@route GET api/users/facebook/login
+//@desc Use passport.FacebookStrategy
+//@access Public
+router.get(
+  "/facebook/login",
+  passport.authenticate("facebook", {
+    session: false,
+    scope: ["public_profile"]
+  })
+);
+
+//@route GET api/users/facebook
+//@desc Login user with facebook/ Returning JWT Token
+//@access Public
+router.get(
+  "/facebook/redirect",
+  passport.authenticate("facebook", { session: false }),
+  (err, user, info) => {
+    console.log(err, user);
+  }
+);
+
 //@route  GET api/users/current
 //@desc   Return current user
 //@access Private
@@ -113,11 +139,59 @@ router.get(
   passport.authenticate("jwt", { session: false }),
   (req, res) => {
     res.json({
-      id: req.user.id,
-      name: req.user.name,
-      email: req.user.email
+      user: {
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email
+      }
     });
   }
+);
+
+//@route  GET api/users/google/login
+//@desc   Login with Google+
+//@access Public
+router.get(
+  "/google/login",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+
+//@route  GET api/users/google/login
+//@desc   Login with Google+
+//@access Public
+router.get(
+  "/google/callback",
+  passport.authenticate("google", (err, user) => {
+    console.log("user ", user);
+    //Create JWT payload
+    const payload = {
+      id: user._id,
+      name: user.name,
+      avatar: user.avatar
+    };
+    //Sign Token
+    jwt.sign(payload, keys.secret, { expiresIn: 3600 }, (err, token) => {
+      console.log("Bearer " + token);
+      res.json({
+        success: true,
+        token: "Bearer " + token
+      });
+    });
+
+    // //Create JWT payload
+    // const payload = {
+    //   id: user.id,
+    //   name: user.name,
+    //   avatar: user.avatar
+    // };
+    // //Sign Token
+    // jwt.sign(payload, keys.secret, { expiresIn: 3600 }, (err, token) => {
+    //   res.json({
+    //     success: true,
+    //     token: "Bearer " + token
+    //   });
+    // });
+  })
 );
 
 module.exports = router;

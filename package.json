@@ -8,7 +8,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "server": "nodemon server.js",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild":
+      "NPM_CONFIG_PRODUCTION=false npm install --prefex client && npm run build --prefex client"
   },
   "author": "PavlenkoAV",
   "license": "MIT",
@@ -21,7 +23,11 @@
     "jsonwebtoken": "^8.2.1",
     "mongoose": "^5.1.2",
     "passport": "^0.4.0",
+    "passport-facebook": "^2.1.1",
+    "passport-google-oauth": "^1.0.0",
+    "passport-google-oauth20": "^1.0.0",
     "passport-jwt": "^4.0.0",
+    "passport-twitter": "^1.0.4",
     "validator": "^10.2.0"
   },
   "devDependencies": {
